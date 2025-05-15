@@ -17,7 +17,7 @@ namespace SmartPetProject.DataAccessLayer.Context
         public DbSet<Veterinarian> Veterinarians { get; set; }
         public DbSet<AnimalOwner> AnimalOwners { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
-
+        public DbSet<Message> Messages { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -26,12 +26,24 @@ namespace SmartPetProject.DataAccessLayer.Context
                 .HasOne(a => a.Veterinarian)
                 .WithMany()
                 .HasForeignKey(a => a.VeterinarianId)
-                .OnDelete(DeleteBehavior.Restrict); // veya .NoAction()
+                .OnDelete(DeleteBehavior.Restrict); 
 
             modelBuilder.Entity<Appointment>()
                 .HasOne(a => a.AnimalOwner)
                 .WithMany()
                 .HasForeignKey(a => a.AnimalOwnerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Message>()
+                .HasOne(m => m.Sender)
+                .WithMany()
+                .HasForeignKey(m => m.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Message>()
+                .HasOne(m => m.Receiver)
+                .WithMany()
+                .HasForeignKey(m => m.ReceiverId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

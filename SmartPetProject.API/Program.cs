@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using SmartPetProject.API.Hubs; // ChatHub için ekle
 using SmartPetProject.BusinessLayer.Abstracts;
 using SmartPetProject.BusinessLayer.Helpers;
 using SmartPetProject.BusinessLayer.Interfaces;
@@ -53,6 +54,22 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = tokenOptions.Audience,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenOptions.SecurityKey))
     };
+
+    // (Opsiyonel) SignalR için token alma ayarý:
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var accessToken = context.Request.Query["access_token"];
+
+            var path = context.HttpContext.Request.Path;
+            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/chathub"))
+            {
+                context.Token = accessToken;
+            }
+            return Task.CompletedTask;
+        }
+    };
 });
 
 // 3. Swagger
@@ -82,10 +99,25 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+//cors config
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("LocalhostPolicy", builder =>
+    {
+        builder
+            .SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-// 4. App Pipeline
+// *** Buraya SignalR servisini ekliyoruz ***
+builder.Services.AddSignalR();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -95,7 +127,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
+app.UseCors("LocalhostPolicy");
+// *** Buraya SignalR Hub rotasýný ekliyoruz ***
+app.MapHub<ChatHub>("/chathub");
+
 app.Run();
