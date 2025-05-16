@@ -12,6 +12,7 @@ using SmartPetProject.DataAccessLayer.Interfaces;
 using SmartPetProject.DataAccessLayer.Repositories;
 using SmartPetProject.EntityLayer.Entities;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,7 +34,7 @@ builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
 builder.Services.AddSingleton<ITokenHelper, JwtHelper>();
 builder.Services.AddSingleton(tokenOptions);
-
+builder.Services.AddScoped<IRoomService, RoomService>();
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
 
@@ -99,13 +100,23 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+    options.JsonSerializerOptions.WriteIndented = true;
+});
+
 //cors config
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("LocalhostPolicy", builder =>
     {
         builder
-            .SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost")
+            .SetIsOriginAllowed(origin =>
+            {
+                var host = new Uri(origin).Host;
+                return host == "localhost" || host == "192.168.41.198";
+            })
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
