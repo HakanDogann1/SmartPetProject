@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using SmartPetProject.API.Hubs; // ChatHub için ekle
 using SmartPetProject.BusinessLayer.Abstracts;
 using SmartPetProject.BusinessLayer.Helpers;
 using SmartPetProject.BusinessLayer.Interfaces;
@@ -11,6 +12,7 @@ using SmartPetProject.DataAccessLayer.Interfaces;
 using SmartPetProject.DataAccessLayer.Repositories;
 using SmartPetProject.EntityLayer.Entities;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,7 +34,7 @@ builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
 builder.Services.AddSingleton<ITokenHelper, JwtHelper>();
 builder.Services.AddSingleton(tokenOptions);
-
+builder.Services.AddScoped<IRoomService, RoomService>();
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
 
@@ -52,6 +54,22 @@ builder.Services.AddAuthentication(options =>
         ValidIssuer = tokenOptions.Issuer,
         ValidAudience = tokenOptions.Audience,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenOptions.SecurityKey))
+    };
+
+    // (Opsiyonel) SignalR için token alma ayarý:
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var accessToken = context.Request.Query["access_token"];
+
+            var path = context.HttpContext.Request.Path;
+            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/chathub"))
+            {
+                context.Token = accessToken;
+            }
+            return Task.CompletedTask;
+        }
     };
 });
 
@@ -82,10 +100,35 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+    options.JsonSerializerOptions.WriteIndented = true;
+});
+
+//cors config
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("LocalhostPolicy", builder =>
+    {
+        builder
+            .SetIsOriginAllowed(origin =>
+            {
+                var host = new Uri(origin).Host;
+                return host == "localhost" || host == "192.168.41.198";
+            })
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-// 4. App Pipeline
+// *** Buraya SignalR servisini ekliyoruz ***
+builder.Services.AddSignalR();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -95,7 +138,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
+app.UseCors("LocalhostPolicy");
+// *** Buraya SignalR Hub rotasýný ekliyoruz ***
+app.MapHub<ChatHub>("/chathub");
+
 app.Run();

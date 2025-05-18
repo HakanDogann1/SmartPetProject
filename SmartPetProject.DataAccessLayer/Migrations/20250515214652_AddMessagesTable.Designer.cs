@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SmartPetProject.DataAccessLayer.Context;
 
@@ -11,9 +12,11 @@ using SmartPetProject.DataAccessLayer.Context;
 namespace SmartPetProject.DataAccessLayer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250515214652_AddMessagesTable")]
+    partial class AddMessagesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -373,37 +376,6 @@ namespace SmartPetProject.DataAccessLayer.Migrations
                     b.ToTable("Messages");
                 });
 
-            modelBuilder.Entity("SmartPetProject.EntityLayer.Entities.Room", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("AppointmentId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("RoomName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RoomUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AppointmentId")
-                        .IsUnique();
-
-                    b.ToTable("Rooms");
-                });
-
             modelBuilder.Entity("SmartPetProject.EntityLayer.Entities.Veterinarian", b =>
                 {
                     b.Property<string>("Id")
@@ -545,17 +517,6 @@ namespace SmartPetProject.DataAccessLayer.Migrations
                     b.Navigation("Sender");
                 });
 
-            modelBuilder.Entity("SmartPetProject.EntityLayer.Entities.Room", b =>
-                {
-                    b.HasOne("SmartPetProject.EntityLayer.Entities.Appointment", "Appointment")
-                        .WithOne("Room")
-                        .HasForeignKey("SmartPetProject.EntityLayer.Entities.Room", "AppointmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Appointment");
-                });
-
             modelBuilder.Entity("SmartPetProject.EntityLayer.Entities.Veterinarian", b =>
                 {
                     b.HasOne("SmartPetProject.EntityLayer.Entities.ApplicationUser", "User")
@@ -570,12 +531,6 @@ namespace SmartPetProject.DataAccessLayer.Migrations
             modelBuilder.Entity("SmartPetProject.EntityLayer.Entities.AnimalOwner", b =>
                 {
                     b.Navigation("Animals");
-                });
-
-            modelBuilder.Entity("SmartPetProject.EntityLayer.Entities.Appointment", b =>
-                {
-                    b.Navigation("Room")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
