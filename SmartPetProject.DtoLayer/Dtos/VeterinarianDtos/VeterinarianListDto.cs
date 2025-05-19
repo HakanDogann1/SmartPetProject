@@ -9,6 +9,7 @@ namespace SmartPetProject.DtoLayer.Dtos.VeterinarianDtos
     public class VeterinarianListDto
     {
         public string Id { get; set; }
+        public string UserId { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
         public string ClinicName { get; set; }

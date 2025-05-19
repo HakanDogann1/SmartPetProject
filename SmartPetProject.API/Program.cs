@@ -112,15 +112,12 @@ builder.Services.AddCors(options =>
     options.AddPolicy("LocalhostPolicy", builder =>
     {
         builder
-            .SetIsOriginAllowed(origin =>
-            {
-                var host = new Uri(origin).Host;
-                return host == "localhost" || host == "192.168.41.198";
-            })
+            .SetIsOriginAllowed(_ => true)
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
     });
+
 });
 
 builder.Services.AddControllers();

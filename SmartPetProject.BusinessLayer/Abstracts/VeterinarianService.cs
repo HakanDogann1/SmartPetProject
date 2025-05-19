@@ -36,6 +36,7 @@ namespace SmartPetProject.BusinessLayer.Abstracts
                 vetList.Add(new VeterinarianListDto
                 {
                     Id = v.Id,
+                    UserId = v.UserId,
                     Name = user.Name,
                     Surname = user.Surname,
                     ClinicName = v.ClinicName,
