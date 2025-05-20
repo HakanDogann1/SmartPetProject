@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace SmartPetProject.BusinessLayer.Abstracts
 {
-    public class AppointmentService:IAppointmentService
+    public class AppointmentService : IAppointmentService
     {
         private readonly IRepository<Appointment> _appointmentRepository;
         private readonly IRepository<Veterinarian> _veterinarianRepository;
@@ -70,6 +70,7 @@ namespace SmartPetProject.BusinessLayer.Abstracts
                 var owner = await _animalOwnerRepository.GetByIdAsync(appt.AnimalOwnerId);
                 result.Add(new UpcomingAppointmentDto
                 {
+                    Id = appt.Id,
                     AppointmentDate = appt.AppointmentDate,
                     AppointmentTime = appt.AppointmentTime,
                     VeterinarianName = $"{user.Name} {user.Surname}"
@@ -98,6 +99,7 @@ namespace SmartPetProject.BusinessLayer.Abstracts
                 var vet = await _veterinarianRepository.GetByIdAsync(appt.VeterinarianId);
                 result.Add(new UpcomingAppointmentDto
                 {
+                    Id = appt.Id,
                     AppointmentDate = appt.AppointmentDate,
                     AppointmentTime = appt.AppointmentTime,
                     VeterinarianName = $"{user?.Name} {user?.Surname}",
@@ -123,6 +125,7 @@ namespace SmartPetProject.BusinessLayer.Abstracts
                 var owner = await _animalOwnerRepository.GetByIdAsync(appt.AnimalOwnerId);
                 result.Add(new UpcomingAppointmentDto
                 {
+                    Id = appt.Id,
                     AppointmentDate = appt.AppointmentDate,
                     AppointmentTime = appt.AppointmentTime,
                     VeterinarianName = $"{user.Name} {user.Surname}"
@@ -148,6 +151,7 @@ namespace SmartPetProject.BusinessLayer.Abstracts
                 var vet = await _veterinarianRepository.GetByIdAsync(appt.VeterinarianId);
                 result.Add(new UpcomingAppointmentDto
                 {
+                    Id = appt.Id,
                     AppointmentDate = appt.AppointmentDate,
                     AppointmentTime = appt.AppointmentTime,
                     VeterinarianName = $"{user?.Name} {user?.Surname}",

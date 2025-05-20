@@ -22,6 +22,7 @@ var tokenOptions = configuration.GetSection("TokenOptions").Get<SmartPetProject.
 if (tokenOptions == null)
     throw new InvalidOperationException("TokenOptions missing or invalid.");
 
+
 // 2. Services
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
@@ -102,8 +103,8 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
-    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-    options.JsonSerializerOptions.WriteIndented = true;
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 });
 
 //cors config
