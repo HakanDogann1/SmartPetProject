@@ -13,7 +13,10 @@ namespace SmartPetProject.DtoLayer.Dtos.ProfileDtos
         public string PhoneNumber { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
+        public string? Picture { get; set; }
         public string ClinicName { get; set; }
         public string LicenseNumber { get; set; }
+        public string Description { get; set; }
+
     }
 }

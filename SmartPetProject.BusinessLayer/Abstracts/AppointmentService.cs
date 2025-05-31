@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SmartPetProject.BusinessLayer.Interfaces;
+using SmartPetProject.DataAccessLayer.Context;
 using SmartPetProject.DataAccessLayer.Interfaces;
 using SmartPetProject.DtoLayer.Dtos.AppointmentDtos;
 using SmartPetProject.EntityLayer.Entities;
@@ -18,12 +19,14 @@ namespace SmartPetProject.BusinessLayer.Abstracts
         private readonly IRepository<Veterinarian> _veterinarianRepository;
         private readonly IRepository<AnimalOwner> _animalOwnerRepository;
         private readonly UserManager<ApplicationUser> _userManager;
-        public AppointmentService(IRepository<Appointment> appointmentRepository, IRepository<Veterinarian> veterinarianRepository, IRepository<AnimalOwner> animalOwnerRepository, UserManager<ApplicationUser> userManager)
+        private readonly AppDbContext _context;
+        public AppointmentService(IRepository<Appointment> appointmentRepository, IRepository<Veterinarian> veterinarianRepository, IRepository<AnimalOwner> animalOwnerRepository, UserManager<ApplicationUser> userManager, AppDbContext context)
         {
             _appointmentRepository = appointmentRepository;
             _veterinarianRepository = veterinarianRepository;
             _animalOwnerRepository = animalOwnerRepository;
             _userManager = userManager;
+            _context = context;
         }
 
         public async Task<IEnumerable<Appointment>> GetAllAppointmentsAsync()
@@ -33,11 +36,14 @@ namespace SmartPetProject.BusinessLayer.Abstracts
 
         public async Task<Appointment> GetAppointmentByIdAsync(string id)
         {
+            
+            
             return await _appointmentRepository.GetByIdAsync(id);
         }
 
         public async Task AddAppointmentAsync(Appointment appointment)
         {
+            appointment.Status = true;
             await _appointmentRepository.AddAsync(appointment);
             await _appointmentRepository.SaveChangesAsync();
         }
@@ -63,17 +69,22 @@ namespace SmartPetProject.BusinessLayer.Abstracts
             var appointments = (await _appointmentRepository.GetAllAsync())
                 .Where(a => a.VeterinarianId == vet.Id && a.AppointmentDate.Date >= today && a.AppointmentDate.Date <= threeDaysLater)
                 .ToList();
-
             var result = new List<UpcomingAppointmentDto>();
             foreach (var appt in appointments)
             {
                 var owner = await _animalOwnerRepository.GetByIdAsync(appt.AnimalOwnerId);
+                var animal = await _context.Animals.FirstOrDefaultAsync(a => a.Id == appt.AnimalId);
                 result.Add(new UpcomingAppointmentDto
                 {
                     Id = appt.Id,
                     AppointmentDate = appt.AppointmentDate,
                     AppointmentTime = appt.AppointmentTime,
-                    VeterinarianName = $"{user.Name} {user.Surname}"
+                    VeterinarianName = $"{user.Name} {user.Surname}",
+                    Age = animal?.Age,
+                    Genus = animal?.Genus,
+                    Name = animal?.Name,
+                    Status = appt.Status,
+                    weight = animal?.weight
                 });
             }
 
@@ -96,13 +107,21 @@ namespace SmartPetProject.BusinessLayer.Abstracts
             var result = new List<UpcomingAppointmentDto>();
             foreach (var appt in appointments)
             {
+                var value = (await _veterinarianRepository.GetByIdAsync(appt.VeterinarianId)).UserId;
+                var veterinarian = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == value);
                 var vet = await _veterinarianRepository.GetByIdAsync(appt.VeterinarianId);
+                var animal = await _context.Animals.FirstOrDefaultAsync(a => a.Id == appt.AnimalId);
                 result.Add(new UpcomingAppointmentDto
                 {
                     Id = appt.Id,
                     AppointmentDate = appt.AppointmentDate,
                     AppointmentTime = appt.AppointmentTime,
-                    VeterinarianName = $"{user?.Name} {user?.Surname}",
+                    VeterinarianName = $"{veterinarian?.Name} {veterinarian?.Surname}",
+                    weight = animal?.weight,
+                    Age = animal?.Age,
+                    Status = appt.Status,
+                    Name = animal?.Name,
+                    Genus = animal?.Genus
                 });
             }
 
@@ -122,13 +141,20 @@ namespace SmartPetProject.BusinessLayer.Abstracts
             var result = new List<UpcomingAppointmentDto>();
             foreach (var appt in appointments)
             {
+
                 var owner = await _animalOwnerRepository.GetByIdAsync(appt.AnimalOwnerId);
+                var animal = await _context.Animals.FirstOrDefaultAsync(a => a.Id == appt.AnimalId);
                 result.Add(new UpcomingAppointmentDto
                 {
                     Id = appt.Id,
                     AppointmentDate = appt.AppointmentDate,
                     AppointmentTime = appt.AppointmentTime,
-                    VeterinarianName = $"{user.Name} {user.Surname}"
+                    VeterinarianName = $"{user.Name} {user.Surname}",
+                    Genus = animal?.Genus,
+                    Name = animal?.Name,
+                    Age = animal?.Age,
+                    Status = appt.Status,
+                    weight = animal?.weight
                 });
             }
 
@@ -148,17 +174,65 @@ namespace SmartPetProject.BusinessLayer.Abstracts
             var result = new List<UpcomingAppointmentDto>();
             foreach (var appt in appointments)
             {
+
                 var vet = await _veterinarianRepository.GetByIdAsync(appt.VeterinarianId);
+                var animal = await _context.Animals.FirstOrDefaultAsync(a => a.Id == appt.AnimalId);
                 result.Add(new UpcomingAppointmentDto
                 {
+
                     Id = appt.Id,
                     AppointmentDate = appt.AppointmentDate,
                     AppointmentTime = appt.AppointmentTime,
                     VeterinarianName = $"{user?.Name} {user?.Surname}",
+                    weight = animal?.weight,
+                    Name = animal?.Name,
+                    Status = appt.Status,
+                    Genus = animal?.Genus,
+                    Age = animal?.Age
                 });
             }
 
             return result;
         }
+
+        public async Task UpdateVeterinarianAppointmentAsync(VeterinarianUpdateAppointmentDto veterinarianUpdateAppointmentDto)
+        {
+            var value =await _appointmentRepository.GetByIdAsync(veterinarianUpdateAppointmentDto.appointmentId);
+            var appointment = new Appointment
+            {
+                Id = value.Id,
+                AppointmentDate = value.AppointmentDate,
+                AppointmentTime = value.AppointmentTime,
+                DurationInMinutes = value.DurationInMinutes,
+                AnimalId = value.AnimalId,
+                AnimalOwnerId = value.AnimalOwnerId,
+                VeterinarianId = value.VeterinarianId,
+                Room = value.Room,
+                Status = true,
+                Note = veterinarianUpdateAppointmentDto.Note 
+            };
+            
+             _appointmentRepository.Update(appointment);
+            await _appointmentRepository.SaveChangesAsync();
+        }
+
+        public async Task CheckAndUpdateAppointmentStatusesAsync()
+        {
+            var appointments = await _appointmentRepository.GetAllAsync();
+
+            foreach (var appointment in appointments)
+            {
+                var appointmentDateTime = appointment.AppointmentDate.Date + appointment.AppointmentTime;
+
+                if (appointmentDateTime < DateTime.Now && appointment.Status == true)
+                {
+                    appointment.Status = false;
+                    _appointmentRepository.Update(appointment);
+                }
+            }
+
+            await _appointmentRepository.SaveChangesAsync();
+        }
+
     }
 }

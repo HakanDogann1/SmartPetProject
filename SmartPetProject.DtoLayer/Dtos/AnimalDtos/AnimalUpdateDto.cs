@@ -12,7 +12,7 @@ namespace SmartPetProject.DtoLayer.Dtos.AnimalDtos
         public string Name { get; set; }
         public string Age { get; set; }
         public string Genus { get; set; }
-        public string Type { get; set; }
+        public string AnimalSpeciesId { get; set; }
         public string Weight { get; set; }
     }
 }

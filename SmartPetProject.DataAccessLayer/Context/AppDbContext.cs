@@ -19,9 +19,37 @@ namespace SmartPetProject.DataAccessLayer.Context
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<Room> Rooms { get; set; }
+        public DbSet<Vaccination> Vaccinations { get; set; }
+        public DbSet<VaccinationCard> VaccinationCards { get; set; }
+        public DbSet<AnimalSpecies> AnimalSpecieses { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Animal>()
+                .HasOne(a=>a.AnimalSpecies)
+                .WithMany()
+                .HasForeignKey(b => b.AnimalSpeciesId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Vaccination>()
+               .HasOne(a => a.AnimalSpecies)
+               .WithMany()
+               .HasForeignKey(vc => vc.AnimalSpeciesId)
+               .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<VaccinationCard>()
+                .HasOne(a=>a.Vaccination)
+                .WithMany()
+                .HasForeignKey(vc => vc.VaccinationId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<VaccinationCard>()
+                .HasOne(a => a.Animal)
+                .WithMany()
+                .HasForeignKey(vc => vc.AnimalId)
+                .OnDelete(DeleteBehavior.Restrict);
+
 
             modelBuilder.Entity<Appointment>()
                 .HasOne(a => a.Veterinarian)

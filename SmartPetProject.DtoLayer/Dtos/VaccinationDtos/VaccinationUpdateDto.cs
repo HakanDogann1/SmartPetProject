@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SmartPetProject.DtoLayer.Dtos.AnimalDtos
+namespace SmartPetProject.DtoLayer.Dtos.VaccinationDtos
 {
-    public class AnimalCreateDto
+    public class VaccinationUpdateDto
     {
+        public string Id { get; set; }
         public string Name { get; set; }
-        public string Age { get; set; }
-        public string Genus { get; set; }
         public string AnimalSpeciesId { get; set; }
-        public string Weight { get; set; }
+        public int NextVaccination { get; set; }
+        
     }
 }

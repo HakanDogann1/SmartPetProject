@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SmartPetProject.DataAccessLayer.Context;
+using SmartPetProject.DtoLayer.Dtos.MessageDtos;
+using SmartPetProject.EntityLayer.Entities;
 using SmartPetProject.EntityLayer.Enums;
 using System.Linq;
 using System.Security.Claims;
@@ -43,19 +45,36 @@ namespace SmartPetProject.API.Controllers
             // İzin verilen mesajlaşma türü: Vet <-> Owner
             var currentIsVet = currentUser.UserType == UserType.Veterinarian;
 
-            var contacts = await _context.Users
-                .Where(u => contactIds.Contains(u.Id))
-                .Where(u => (u.UserType == UserType.Veterinarian && !currentIsVet) || (u.UserType != UserType.Veterinarian && currentIsVet))
-                .Select(u => new
+            var users = await _context.Users
+    .Where(u => contactIds.Contains(u.Id))
+    .Where(u => (u.UserType == UserType.Veterinarian && !currentIsVet) ||
+                (u.UserType != UserType.Veterinarian && currentIsVet))
+    .ToListAsync();
+
+            var contacts = new List<MessageBoxDto>();
+
+            foreach (var u in users)
+            {
+                var lastMessage = await _context.Messages
+                    .Where(m => (m.SenderId == currentUserId && m.ReceiverId == u.Id) ||
+                                (m.SenderId == u.Id && m.ReceiverId == currentUserId))
+                    .OrderByDescending(m => m.SentDate)
+                    .Select(m => m.Content)
+                    .FirstOrDefaultAsync();
+
+                contacts.Add(new MessageBoxDto
                 {
-                    u.Id,
-                    u.Name,
-                    u.Surname,
-                    u.UserType,
-                    u.Email,
-                    u.PhoneNumber
-                })
-                .ToListAsync();
+                    Id = u.Id,
+                    Name = u.Name,
+                    Surname = u.Surname,
+                    UserType = u.UserType,
+                    Email = u.Email,
+                    PhoneNumber = u.PhoneNumber,
+                    Message = lastMessage
+                });
+            }
+
+            contacts.Reverse();
 
             return Ok(contacts);
         }

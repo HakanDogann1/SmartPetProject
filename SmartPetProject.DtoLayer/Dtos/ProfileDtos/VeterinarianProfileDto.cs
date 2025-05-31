@@ -10,6 +10,8 @@ namespace SmartPetProject.DtoLayer.Dtos.ProfileDtos
     {
         public string ClinicName { get; set; }
         public string LicenseNumber { get; set; }
+        public string Description { get; set; }
+        public string? Picture { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
     }

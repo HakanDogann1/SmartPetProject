@@ -28,12 +28,12 @@ namespace SmartPetProject.BusinessLayer.Abstracts
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null) return false;
-
             user.UserName = dto.UserName;
             user.Email = dto.Email;
             user.Name = dto.Name;
             user.Surname = dto.Surname;
             user.PhoneNumber = dto.PhoneNumber;
+            user.Picture = dto.Picture;
             await _userManager.UpdateAsync(user);
 
             var vet = await _context.Veterinarians.FirstOrDefaultAsync(v => v.UserId == userId);
@@ -56,6 +56,7 @@ namespace SmartPetProject.BusinessLayer.Abstracts
             user.UserName = dto.UserName;
             user.Email = dto.Email;
             user.PhoneNumber = dto.PhoneNumber;
+            user.Picture = dto.Picture;
             await _userManager.UpdateAsync(user);
 
             var owner = await _context.AnimalOwners.FirstOrDefaultAsync(o => o.UserId == userId);
@@ -63,7 +64,6 @@ namespace SmartPetProject.BusinessLayer.Abstracts
 
             
             owner.Address = dto.Address;
-            owner.Description = dto.Description;
             owner.UpdatedDate = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
@@ -91,7 +91,8 @@ namespace SmartPetProject.BusinessLayer.Abstracts
                 Name = user.Name,
                 Surname = user.Surname,
                 ClinicName = vet.ClinicName,
-                LicenseNumber = vet.LicenseNumber
+                LicenseNumber = vet.LicenseNumber,
+                Picture = user.Picture
             };
         }
 
@@ -113,8 +114,30 @@ namespace SmartPetProject.BusinessLayer.Abstracts
                 Id = owner.Id,
                 PhoneNumber = user.PhoneNumber,
                 Address = owner.Address,
-                Description = owner.Description
-            };
+                Picture = user.Picture
+,            };
+        }
+
+        public async Task<bool> PasswordChangeAsync(string userId ,PasswordChangeDto passwordChangeDto)
+        {
+            if(passwordChangeDto == null || string.IsNullOrEmpty(userId) ||
+                string.IsNullOrEmpty(passwordChangeDto.Password) || string.IsNullOrEmpty(passwordChangeDto.NewPassword))
+            {
+                return false;
+            }
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return false;
+            }
+            var value =await _userManager.ChangePasswordAsync(
+                await _userManager.FindByIdAsync(userId),
+                passwordChangeDto.Password,
+                passwordChangeDto.NewPassword
+            );
+            await _userManager.UpdateSecurityStampAsync(user);
+            return true;
+
         }
     }
 }

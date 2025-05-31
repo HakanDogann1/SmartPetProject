@@ -4,14 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SmartPetProject.DtoLayer.Dtos.AnimalDtos
+namespace SmartPetProject.DtoLayer.Dtos.VaccinationDtos
 {
-    public class AnimalCreateDto
+    public class VaccinationCreateDto
     {
         public string Name { get; set; }
-        public string Age { get; set; }
-        public string Genus { get; set; }
         public string AnimalSpeciesId { get; set; }
-        public string Weight { get; set; }
+        public int NextVaccination { get; set; }
     }
 }

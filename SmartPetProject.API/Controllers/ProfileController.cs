@@ -80,5 +80,18 @@ namespace SmartPetProject.API.Controllers
 
             return Ok(profile);
         }
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] PasswordChangeDto dto)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized("Kullanıcı kimliği bulunamadı.");
+
+            var result = await _profileService.PasswordChangeAsync(userId, dto);
+            if (result)
+                return Ok("Şifre başarıyla değiştirildi.");
+            else
+                return BadRequest("Şifre değişikliği başarısız oldu.");
+        }
     }
 }

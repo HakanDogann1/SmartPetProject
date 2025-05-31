@@ -17,5 +17,7 @@ namespace SmartPetProject.BusinessLayer.Interfaces
         Task<List<UpcomingAppointmentDto>> GetUpcomingAppointmentsForVeterinarianAsync(string userId);
         Task<List<UpcomingAppointmentDto>> GetUpcomingAppointmentsForOwnerAsync(string userId);
         Task<List<UpcomingAppointmentDto>> GetAllAppointmentsForVeterinarianAsync(string userId);
+        Task UpdateVeterinarianAppointmentAsync(VeterinarianUpdateAppointmentDto veterinarianUpdateAppointmentDto);
+        Task CheckAndUpdateAppointmentStatusesAsync();
     }
 }

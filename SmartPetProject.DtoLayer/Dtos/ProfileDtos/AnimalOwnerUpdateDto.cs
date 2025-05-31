@@ -14,6 +14,7 @@ namespace SmartPetProject.DtoLayer.Dtos.ProfileDtos
         public string AnimalOwnerName { get; set; }
         public string AnimalOwnerSurname { get; set; }
         public string Address { get; set; }
-        public string Description { get; set; }
+        public string? Picture { get; set; }
+
     }
 }

@@ -46,5 +46,11 @@ namespace SmartPetProject.BusinessLayer.Abstracts
             _animalRepository.Remove(animal);
             await _animalRepository.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<Animal>> GetAllAsync()
+        {
+            var value = await _animalRepository.GetAllAsync();
+            return value;
+        }
     }
 }

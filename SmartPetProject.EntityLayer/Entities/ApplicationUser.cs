@@ -12,6 +12,7 @@ namespace SmartPetProject.EntityLayer.Entities
     {
         public string Name { get; set; }
         public string Surname { get; set; }
+        public string? Picture { get; set; }
         public UserType UserType { get; set; }
     }
 }

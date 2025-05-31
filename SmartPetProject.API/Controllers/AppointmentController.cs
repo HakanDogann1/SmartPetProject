@@ -61,7 +61,8 @@ namespace SmartPetProject.API.Controllers
                 AppointmentTime = parsedTime,
                 DurationInMinutes = 30,
                 VeterinarianId = dto.VeterinarianId,
-                AnimalOwnerId = owner.Id
+                AnimalOwnerId = owner.Id,
+                AnimalId = dto.AnimalId,
             };
 
             await _appointmentService.AddAppointmentAsync(appointment);
@@ -117,7 +118,20 @@ namespace SmartPetProject.API.Controllers
             var result = await _appointmentService.GetUpcomingAppointmentsForOwnerAsync(userId);
             return Ok(result);
         }
-
+        [HttpPost("update/veterinarianNote")]
+        public async Task<IActionResult> CreateAppointmentNote(VeterinarianUpdateAppointmentDto veterinarianUpdateAppointmentDto)
+        {
+            if (!IsUserType("veterinarian"))
+                return StatusCode(403, "Sadece veteriner kullanıcılar erişebilir.");
+            await _appointmentService.UpdateVeterinarianAppointmentAsync(veterinarianUpdateAppointmentDto);
+            return Ok("Not eklendi");
+        }
+        [HttpPost("update/pastAppointmentsStatus")]
+        public async Task<IActionResult> UpdatePastAppointmentsStatusAsync()
+        {
+            await _appointmentService.CheckAndUpdateAppointmentStatusesAsync();
+            return Ok();
+        }
         private string GetUserId()
         {
             return User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -127,6 +141,8 @@ namespace SmartPetProject.API.Controllers
         {
             return User.FindFirst("UserType")?.Value?.ToLower() == type.ToLower();
         }
+
+        
     }
 }
 

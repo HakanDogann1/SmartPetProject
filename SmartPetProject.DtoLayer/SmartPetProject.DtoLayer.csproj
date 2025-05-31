@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SmartPetProject.EntityLayer\SmartPetProject.EntityLayer.csproj" />
+  </ItemGroup>
+
 </Project>

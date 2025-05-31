@@ -14,5 +14,6 @@ namespace SmartPetProject.BusinessLayer.Interfaces
         Task AddAnimalAsync(Animal animal);
         Task UpdateAnimalAsync(Animal animal);
         Task DeleteAnimalAsync(Animal animal);
+        Task<IEnumerable<Animal>> GetAllAsync();
     }
 }

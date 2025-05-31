@@ -12,8 +12,8 @@ using SmartPetProject.DataAccessLayer.Context;
 namespace SmartPetProject.DataAccessLayer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250516103517_Add-Room-Entity")]
-    partial class AddRoomEntity
+    [Migration("20250531071206_mig1_appointment_update")]
+    partial class mig1_appointment_update
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -171,6 +171,13 @@ namespace SmartPetProject.DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("AnimalSpeciesId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("AnimalSpeciesId1")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
@@ -179,10 +186,6 @@ namespace SmartPetProject.DataAccessLayer.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -196,6 +199,10 @@ namespace SmartPetProject.DataAccessLayer.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AnimalOwnerId");
+
+                    b.HasIndex("AnimalSpeciesId");
+
+                    b.HasIndex("AnimalSpeciesId1");
 
                     b.ToTable("Animals");
                 });
@@ -212,10 +219,6 @@ namespace SmartPetProject.DataAccessLayer.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
@@ -228,6 +231,26 @@ namespace SmartPetProject.DataAccessLayer.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("AnimalOwners");
+                });
+
+            modelBuilder.Entity("SmartPetProject.EntityLayer.Entities.AnimalSpecies", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AnimalSpecieses");
                 });
 
             modelBuilder.Entity("SmartPetProject.EntityLayer.Entities.ApplicationUser", b =>
@@ -276,6 +299,9 @@ namespace SmartPetProject.DataAccessLayer.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Picture")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -311,6 +337,10 @@ namespace SmartPetProject.DataAccessLayer.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("AnimalId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("AnimalOwnerId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -324,15 +354,19 @@ namespace SmartPetProject.DataAccessLayer.Migrations
                     b.Property<int>("DurationInMinutes")
                         .HasColumnType("int");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
+                    b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
 
                     b.Property<string>("VeterinarianId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AnimalId");
 
                     b.HasIndex("AnimalOwnerId");
 
@@ -407,6 +441,76 @@ namespace SmartPetProject.DataAccessLayer.Migrations
                     b.ToTable("Rooms");
                 });
 
+            modelBuilder.Entity("SmartPetProject.EntityLayer.Entities.Vaccination", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("AnimalSpeciesId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("AnimalSpeciesId1")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NextVaccination")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnimalSpeciesId");
+
+                    b.HasIndex("AnimalSpeciesId1");
+
+                    b.ToTable("Vaccinations");
+                });
+
+            modelBuilder.Entity("SmartPetProject.EntityLayer.Entities.VaccinationCard", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("AnimalId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("NextVaccinationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("VaccinationId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("VaccinationId1")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnimalId");
+
+                    b.HasIndex("VaccinationId");
+
+                    b.HasIndex("VaccinationId1");
+
+                    b.ToTable("VaccinationCards");
+                });
+
             modelBuilder.Entity("SmartPetProject.EntityLayer.Entities.Veterinarian", b =>
                 {
                     b.Property<string>("Id")
@@ -418,6 +522,10 @@ namespace SmartPetProject.DataAccessLayer.Migrations
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LicenseNumber")
                         .IsRequired()
@@ -496,7 +604,19 @@ namespace SmartPetProject.DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("SmartPetProject.EntityLayer.Entities.AnimalSpecies", "AnimalSpecies")
+                        .WithMany()
+                        .HasForeignKey("AnimalSpeciesId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SmartPetProject.EntityLayer.Entities.AnimalSpecies", null)
+                        .WithMany("Animals")
+                        .HasForeignKey("AnimalSpeciesId1");
+
                     b.Navigation("AnimalOwner");
+
+                    b.Navigation("AnimalSpecies");
                 });
 
             modelBuilder.Entity("SmartPetProject.EntityLayer.Entities.AnimalOwner", b =>
@@ -512,6 +632,12 @@ namespace SmartPetProject.DataAccessLayer.Migrations
 
             modelBuilder.Entity("SmartPetProject.EntityLayer.Entities.Appointment", b =>
                 {
+                    b.HasOne("SmartPetProject.EntityLayer.Entities.Animal", "Animal")
+                        .WithMany()
+                        .HasForeignKey("AnimalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("SmartPetProject.EntityLayer.Entities.AnimalOwner", "AnimalOwner")
                         .WithMany()
                         .HasForeignKey("AnimalOwnerId")
@@ -523,6 +649,8 @@ namespace SmartPetProject.DataAccessLayer.Migrations
                         .HasForeignKey("VeterinarianId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Animal");
 
                     b.Navigation("AnimalOwner");
 
@@ -559,6 +687,44 @@ namespace SmartPetProject.DataAccessLayer.Migrations
                     b.Navigation("Appointment");
                 });
 
+            modelBuilder.Entity("SmartPetProject.EntityLayer.Entities.Vaccination", b =>
+                {
+                    b.HasOne("SmartPetProject.EntityLayer.Entities.AnimalSpecies", "AnimalSpecies")
+                        .WithMany()
+                        .HasForeignKey("AnimalSpeciesId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SmartPetProject.EntityLayer.Entities.AnimalSpecies", null)
+                        .WithMany("Vaccinations")
+                        .HasForeignKey("AnimalSpeciesId1");
+
+                    b.Navigation("AnimalSpecies");
+                });
+
+            modelBuilder.Entity("SmartPetProject.EntityLayer.Entities.VaccinationCard", b =>
+                {
+                    b.HasOne("SmartPetProject.EntityLayer.Entities.Animal", "Animal")
+                        .WithMany()
+                        .HasForeignKey("AnimalId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SmartPetProject.EntityLayer.Entities.Vaccination", "Vaccination")
+                        .WithMany()
+                        .HasForeignKey("VaccinationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SmartPetProject.EntityLayer.Entities.Vaccination", null)
+                        .WithMany("VaccinationCards")
+                        .HasForeignKey("VaccinationId1");
+
+                    b.Navigation("Animal");
+
+                    b.Navigation("Vaccination");
+                });
+
             modelBuilder.Entity("SmartPetProject.EntityLayer.Entities.Veterinarian", b =>
                 {
                     b.HasOne("SmartPetProject.EntityLayer.Entities.ApplicationUser", "User")
@@ -575,10 +741,22 @@ namespace SmartPetProject.DataAccessLayer.Migrations
                     b.Navigation("Animals");
                 });
 
+            modelBuilder.Entity("SmartPetProject.EntityLayer.Entities.AnimalSpecies", b =>
+                {
+                    b.Navigation("Animals");
+
+                    b.Navigation("Vaccinations");
+                });
+
             modelBuilder.Entity("SmartPetProject.EntityLayer.Entities.Appointment", b =>
                 {
                     b.Navigation("Room")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("SmartPetProject.EntityLayer.Entities.Vaccination", b =>
+                {
+                    b.Navigation("VaccinationCards");
                 });
 #pragma warning restore 612, 618
         }

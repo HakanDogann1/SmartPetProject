@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace SmartPetProject.EntityLayer.Entities
 {
-    public class AnimalOwner:BaseEntity
+    public class AnimalSpecies:BaseEntity
     {
-        public string Address { get; set; }
-        public string UserId { get; set; }
-        public ApplicationUser User { get; set; }
+        public string Name { get; set; }
+
+        public List<Vaccination> Vaccinations { get; set; }
         public List<Animal> Animals { get; set; }
     }
 }

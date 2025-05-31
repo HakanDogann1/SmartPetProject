@@ -22,19 +22,23 @@ namespace SmartPetProject.API.Controllers
             _context = context;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+        [HttpGet("animal-owner")]
+        public async Task<IActionResult> GetAllByAnimalOwners()
         {
-            if (!IsPetOwner())
-                return StatusCode(403, "Sadece hayvan sahipleri bu veriye erişebilir.");
-
             var owner = await GetCurrentOwnerAsync();
             if (owner == null) return BadRequest("Hayvan sahibi bulunamadı.");
 
             var animals = await _animalService.GetAllByOwnerIdAsync(owner.Id);
             return Ok(animals);
         }
+        [HttpGet("getall")]
+        public async Task<IActionResult> GetAll()
+        {
+           
 
+            var animals = await _animalService.GetAllAsync();
+            return Ok(animals);
+        }
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] AnimalCreateDto dto)
         {
@@ -50,7 +54,7 @@ namespace SmartPetProject.API.Controllers
                 Name = dto.Name,
                 Age = dto.Age,
                 Genus = dto.Genus,
-                Type = dto.Type,
+                AnimalSpeciesId = dto.AnimalSpeciesId,
                 weight = dto.Weight,
                 AnimalOwnerId = owner.Id
             };
@@ -75,7 +79,7 @@ namespace SmartPetProject.API.Controllers
             animal.Name = dto.Name;
             animal.Age = dto.Age;
             animal.Genus = dto.Genus;
-            animal.Type = dto.Type;
+            animal.AnimalSpeciesId = dto.AnimalSpeciesId;
             animal.weight = dto.Weight;
 
             await _animalService.UpdateAnimalAsync(animal);

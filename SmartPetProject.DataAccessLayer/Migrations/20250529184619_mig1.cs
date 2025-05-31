@@ -12,6 +12,20 @@ namespace SmartPetProject.DataAccessLayer.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "AnimalSpecieses",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AnimalSpecieses", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
                 {
@@ -32,6 +46,7 @@ namespace SmartPetProject.DataAccessLayer.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Surname = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Picture = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserType = table.Column<int>(type: "int", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -51,6 +66,34 @@ namespace SmartPetProject.DataAccessLayer.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Vaccinations",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NextVaccination = table.Column<int>(type: "int", nullable: false),
+                    AnimalSpeciesId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    AnimalSpeciesId1 = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Vaccinations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Vaccinations_AnimalSpecieses_AnimalSpeciesId",
+                        column: x => x.AnimalSpeciesId,
+                        principalTable: "AnimalSpecieses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Vaccinations_AnimalSpecieses_AnimalSpeciesId1",
+                        column: x => x.AnimalSpeciesId1,
+                        principalTable: "AnimalSpecieses",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -80,7 +123,6 @@ namespace SmartPetProject.DataAccessLayer.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -182,12 +224,42 @@ namespace SmartPetProject.DataAccessLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Messages",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    SenderId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ReceiverId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Messages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Messages_AspNetUsers_ReceiverId",
+                        column: x => x.ReceiverId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Messages_AspNetUsers_SenderId",
+                        column: x => x.SenderId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Veterinarians",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ClinicName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LicenseNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -211,9 +283,10 @@ namespace SmartPetProject.DataAccessLayer.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Age = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Genus = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     weight = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AnimalOwnerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    AnimalSpeciesId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    AnimalSpeciesId1 = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -226,6 +299,17 @@ namespace SmartPetProject.DataAccessLayer.Migrations
                         principalTable: "AnimalOwners",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Animals_AnimalSpecieses_AnimalSpeciesId",
+                        column: x => x.AnimalSpeciesId,
+                        principalTable: "AnimalSpecieses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Animals_AnimalSpecieses_AnimalSpeciesId1",
+                        column: x => x.AnimalSpeciesId1,
+                        principalTable: "AnimalSpecieses",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -238,7 +322,8 @@ namespace SmartPetProject.DataAccessLayer.Migrations
                     DurationInMinutes = table.Column<int>(type: "int", nullable: false),
                     AnimalOwnerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     VeterinarianId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Status = table.Column<bool>(type: "bit", nullable: false),
+                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -257,6 +342,62 @@ namespace SmartPetProject.DataAccessLayer.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "VaccinationCards",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    AnimalId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    VaccinationId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    NextVaccinationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    VaccinationId1 = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VaccinationCards", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_VaccinationCards_Animals_AnimalId",
+                        column: x => x.AnimalId,
+                        principalTable: "Animals",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_VaccinationCards_Vaccinations_VaccinationId",
+                        column: x => x.VaccinationId,
+                        principalTable: "Vaccinations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_VaccinationCards_Vaccinations_VaccinationId1",
+                        column: x => x.VaccinationId1,
+                        principalTable: "Vaccinations",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Rooms",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    RoomName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RoomUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AppointmentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Rooms", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Rooms_Appointments_AppointmentId",
+                        column: x => x.AppointmentId,
+                        principalTable: "Appointments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AnimalOwners_UserId",
                 table: "AnimalOwners",
@@ -266,6 +407,16 @@ namespace SmartPetProject.DataAccessLayer.Migrations
                 name: "IX_Animals_AnimalOwnerId",
                 table: "Animals",
                 column: "AnimalOwnerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Animals_AnimalSpeciesId",
+                table: "Animals",
+                column: "AnimalSpeciesId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Animals_AnimalSpeciesId1",
+                table: "Animals",
+                column: "AnimalSpeciesId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Appointments_AnimalOwnerId",
@@ -317,6 +468,47 @@ namespace SmartPetProject.DataAccessLayer.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Messages_ReceiverId",
+                table: "Messages",
+                column: "ReceiverId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Messages_SenderId",
+                table: "Messages",
+                column: "SenderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Rooms_AppointmentId",
+                table: "Rooms",
+                column: "AppointmentId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VaccinationCards_AnimalId",
+                table: "VaccinationCards",
+                column: "AnimalId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VaccinationCards_VaccinationId",
+                table: "VaccinationCards",
+                column: "VaccinationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VaccinationCards_VaccinationId1",
+                table: "VaccinationCards",
+                column: "VaccinationId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Vaccinations_AnimalSpeciesId",
+                table: "Vaccinations",
+                column: "AnimalSpeciesId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Vaccinations_AnimalSpeciesId1",
+                table: "Vaccinations",
+                column: "AnimalSpeciesId1");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Veterinarians_UserId",
                 table: "Veterinarians",
                 column: "UserId");
@@ -325,12 +517,6 @@ namespace SmartPetProject.DataAccessLayer.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Animals");
-
-            migrationBuilder.DropTable(
-                name: "Appointments");
-
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -347,13 +533,34 @@ namespace SmartPetProject.DataAccessLayer.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "AnimalOwners");
+                name: "Messages");
+
+            migrationBuilder.DropTable(
+                name: "Rooms");
+
+            migrationBuilder.DropTable(
+                name: "VaccinationCards");
+
+            migrationBuilder.DropTable(
+                name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Appointments");
+
+            migrationBuilder.DropTable(
+                name: "Animals");
+
+            migrationBuilder.DropTable(
+                name: "Vaccinations");
 
             migrationBuilder.DropTable(
                 name: "Veterinarians");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
+                name: "AnimalOwners");
+
+            migrationBuilder.DropTable(
+                name: "AnimalSpecieses");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

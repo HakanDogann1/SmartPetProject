@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SmartPetProject.DtoLayer.Dtos.ProfileDtos
+namespace SmartPetProject.DtoLayer.Dtos.AnimalSpeciesDtos
 {
-    public class AnimalOwnerProfileDto:ApplicationUserProfileDto
+    public class AnimalSpeciesResultDto
     {
-        public string Address { get; set; }
+        public string Id { get; set; }
+        public string Name { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
     }

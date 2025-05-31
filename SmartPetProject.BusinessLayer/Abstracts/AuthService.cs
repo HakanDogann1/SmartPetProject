@@ -35,6 +35,7 @@ namespace SmartPetProject.BusinessLayer.Abstracts
                 Surname = dto.Surname,
                 Email = dto.Email,
                 UserType = UserType.Veterinarian,
+                Picture = dto.Picture
             };
 
             var result = await _userManager.CreateAsync(user, dto.Password);
@@ -47,7 +48,8 @@ namespace SmartPetProject.BusinessLayer.Abstracts
                 ClinicName = dto.ClinicName,
                 LicenseNumber = dto.LicenseNumber,
                 CreatedDate = DateTime.Now,
-                UpdatedDate = DateTime.Now
+                UpdatedDate = DateTime.Now,
+                Description = dto.Description
             };
 
             _context.Veterinarians.Add(vet);
@@ -76,7 +78,6 @@ namespace SmartPetProject.BusinessLayer.Abstracts
                 Id = Guid.NewGuid().ToString(),
                 UserId = user.Id,
                 Address = dto.Address,
-                Description = dto.Description,
                 CreatedDate = DateTime.Now,
                 UpdatedDate = DateTime.Now,
                 Animals = new List<Animal>()

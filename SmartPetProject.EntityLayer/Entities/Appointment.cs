@@ -33,7 +33,13 @@ namespace SmartPetProject.EntityLayer.Entities
 
         [ForeignKey(nameof(VeterinarianId))]
         public Veterinarian Veterinarian { get; set; }
+
+        public string AnimalId { get; set; }
+        [ForeignKey(nameof(AnimalId))]
+        public Animal Animal { get; set; }
         public Room Room { get; set; }
-        public string Status { get; set; } = "Scheduled";
+        public bool Status { get; set; }
+
+        public string? Note { get; set; }
     }
 }

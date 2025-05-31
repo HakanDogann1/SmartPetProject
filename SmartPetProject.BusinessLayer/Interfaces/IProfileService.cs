@@ -12,6 +12,7 @@ namespace SmartPetProject.BusinessLayer.Interfaces
     {
         Task<bool> UpdateVeterinarianFullProfileAsync(string userId, VeterinarianUpdateDto dto);
         Task<bool> UpdateAnimalOwnerFullProfileAsync(string userId, AnimalOwnerUpdateDto dto);
+        Task<bool> PasswordChangeAsync(string userId,PasswordChangeDto passwordChangeDto);
         Task<IEnumerable<ApplicationUser>> GetAllUsersForAdminAsync();
         Task<VeterinarianProfileDto> GetVeterinarianProfileAsync(string userId);
         Task<AnimalOwnerProfileDto> GetAnimalOwnerProfileAsync(string userId);
