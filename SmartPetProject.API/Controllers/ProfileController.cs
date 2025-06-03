@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SmartPetProject.BusinessLayer.Interfaces;
 using SmartPetProject.DtoLayer.Dtos.ProfileDtos;
+using SmartPetProject.EntityLayer.Entities;
 using System.Security.Claims;
 
 namespace SmartPetProject.API.Controllers
@@ -11,7 +13,6 @@ namespace SmartPetProject.API.Controllers
     public class ProfileController : ControllerBase
     {
         private readonly IProfileService _profileService;
-
         public ProfileController(IProfileService profileService)
         {
             _profileService = profileService;
@@ -86,6 +87,7 @@ namespace SmartPetProject.API.Controllers
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized("Kullanıcı kimliği bulunamadı.");
+
 
             var result = await _profileService.PasswordChangeAsync(userId, dto);
             if (result)

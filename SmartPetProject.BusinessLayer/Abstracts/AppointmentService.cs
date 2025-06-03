@@ -84,7 +84,12 @@ namespace SmartPetProject.BusinessLayer.Abstracts
                     Genus = animal?.Genus,
                     Name = animal?.Name,
                     Status = appt.Status,
-                    weight = animal?.weight
+                    weight = animal?.weight,
+                    VeterinarianId = vet.Id,
+                    AnimalOwnerId= owner.Id,
+                    Room = appt.Room,
+                    Note = appt.Note
+                    
                 });
             }
 
@@ -121,7 +126,11 @@ namespace SmartPetProject.BusinessLayer.Abstracts
                     Age = animal?.Age,
                     Status = appt.Status,
                     Name = animal?.Name,
-                    Genus = animal?.Genus
+                    Genus = animal?.Genus,
+                    VeterinarianId = vet.Id,
+                    AnimalOwnerId = owner.Id,
+                    Room = appt.Room,
+                    Note = appt.Note
                 });
             }
 
@@ -154,7 +163,11 @@ namespace SmartPetProject.BusinessLayer.Abstracts
                     Name = animal?.Name,
                     Age = animal?.Age,
                     Status = appt.Status,
-                    weight = animal?.weight
+                    weight = animal?.weight,
+                    VeterinarianId = vet.Id,
+                    AnimalOwnerId = owner.Id,
+                    Room = appt.Room,
+                    Note = appt.Note
                 });
             }
 
@@ -188,7 +201,11 @@ namespace SmartPetProject.BusinessLayer.Abstracts
                     Name = animal?.Name,
                     Status = appt.Status,
                     Genus = animal?.Genus,
-                    Age = animal?.Age
+                    Age = animal?.Age,
+                    VeterinarianId = vet.Id,
+                    AnimalOwnerId = owner.Id,
+                    Room = appt.Room,
+                    Note= appt.Note
                 });
             }
 
@@ -197,39 +214,23 @@ namespace SmartPetProject.BusinessLayer.Abstracts
 
         public async Task UpdateVeterinarianAppointmentAsync(VeterinarianUpdateAppointmentDto veterinarianUpdateAppointmentDto)
         {
-            var value =await _appointmentRepository.GetByIdAsync(veterinarianUpdateAppointmentDto.appointmentId);
-            var appointment = new Appointment
-            {
-                Id = value.Id,
-                AppointmentDate = value.AppointmentDate,
-                AppointmentTime = value.AppointmentTime,
-                DurationInMinutes = value.DurationInMinutes,
-                AnimalId = value.AnimalId,
-                AnimalOwnerId = value.AnimalOwnerId,
-                VeterinarianId = value.VeterinarianId,
-                Room = value.Room,
-                Status = true,
-                Note = veterinarianUpdateAppointmentDto.Note 
-            };
-            
-             _appointmentRepository.Update(appointment);
+            var appointment = await _appointmentRepository.GetByIdAsync(veterinarianUpdateAppointmentDto.appointmentId);
+            if (appointment == null)
+                throw new Exception("Appointment not found.");
+
+            appointment.Note = veterinarianUpdateAppointmentDto.Note;
+            appointment.Status = true;
+            _appointmentRepository.Update(appointment);
             await _appointmentRepository.SaveChangesAsync();
         }
 
-        public async Task CheckAndUpdateAppointmentStatusesAsync()
+        public async Task CheckAndUpdateAppointmentStatusesAsync(string appointmentId)
         {
-            var appointments = await _appointmentRepository.GetAllAsync();
+            var appointment = await _appointmentRepository.GetByIdAsync(appointmentId);
 
-            foreach (var appointment in appointments)
-            {
-                var appointmentDateTime = appointment.AppointmentDate.Date + appointment.AppointmentTime;
 
-                if (appointmentDateTime < DateTime.Now && appointment.Status == true)
-                {
-                    appointment.Status = false;
-                    _appointmentRepository.Update(appointment);
-                }
-            }
+            appointment.Status = false;
+            _appointmentRepository.Update(appointment);
 
             await _appointmentRepository.SaveChangesAsync();
         }

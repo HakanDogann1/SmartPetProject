@@ -40,7 +40,8 @@ namespace SmartPetProject.BusinessLayer.Abstracts
                     Name = user.Name,
                     Surname = user.Surname,
                     ClinicName = v.ClinicName,
-                    LicenseNumber = v.LicenseNumber
+                    LicenseNumber = v.LicenseNumber,
+                    Description = v.Description
                 });
             }
 

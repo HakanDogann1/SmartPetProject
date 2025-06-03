@@ -130,6 +130,18 @@ namespace SmartPetProject.BusinessLayer.Abstracts
             {
                 return false;
             }
+            
+            var passwordCheck = await _userManager.CheckPasswordAsync(user, passwordChangeDto.Password);
+            if (!passwordCheck)
+            {
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(passwordChangeDto.NewPassword) ||passwordChangeDto.NewPassword.Length < 8 ||!passwordChangeDto.NewPassword.Any(char.IsUpper)
+                || !passwordChangeDto.NewPassword.Any(char.IsLower) || !passwordChangeDto.NewPassword.Any(char.IsDigit) || !passwordChangeDto.NewPassword.Any(c => "!@#$%^&*()_+-=[]{}|;:',.<>/?".Contains(c)))
+                return false;
+
+           
             var value =await _userManager.ChangePasswordAsync(
                 await _userManager.FindByIdAsync(userId),
                 passwordChangeDto.Password,

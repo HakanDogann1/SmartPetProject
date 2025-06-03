@@ -14,5 +14,7 @@ namespace SmartPetProject.DtoLayer.Dtos.VeterinarianDtos
         public string Surname { get; set; }
         public string ClinicName { get; set; }
         public string LicenseNumber { get; set; }
+        public string Description { get; set; }
+
     }
 }

@@ -127,9 +127,9 @@ namespace SmartPetProject.API.Controllers
             return Ok("Not eklendi");
         }
         [HttpPost("update/pastAppointmentsStatus")]
-        public async Task<IActionResult> UpdatePastAppointmentsStatusAsync()
+        public async Task<IActionResult> UpdatePastAppointmentsStatusAsync(string appointmentId)
         {
-            await _appointmentService.CheckAndUpdateAppointmentStatusesAsync();
+            await _appointmentService.CheckAndUpdateAppointmentStatusesAsync(appointmentId);
             return Ok();
         }
         private string GetUserId()
